@@ -18,7 +18,7 @@ import org.json.JSONArray;
  */
 public class GraphActivity extends AppCompatActivity{
 
-    final String DATA_URL =""
+    final String DATA_URL ="http://54.187.201.38:3000/getdata";
     LineChart chart;
 
     @Override

@@ -19,7 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.BarCodeResult" />
+        <activity android:name=".Activities.BarCodeResult"
+            android:parentActivityName=".Activities.MainActivity"/>
+        <activity android:name=".Activities.GraphActivity"
+            android:parentActivityName=".Activities.MainActivity"/>
     </application>
 
 </manifest>

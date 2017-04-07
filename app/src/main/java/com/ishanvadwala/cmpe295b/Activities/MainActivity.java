@@ -81,7 +81,8 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.settingsItem:
-                Log.d("MAINACT LOG", "clicked settings item");
+                    Intent intent = new Intent(this, GraphActivity.class);
+                    startActivity(intent);
                 return true;
             case R.id.QRCodeItem:
                 zXingScannerView = new ZXingScannerView(this);
@@ -97,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     protected void onPause() {
         super.onPause();
+        if(zXingScannerView != null)
         zXingScannerView.stopCamera();
     }
 

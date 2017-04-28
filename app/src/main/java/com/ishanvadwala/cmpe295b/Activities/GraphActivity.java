@@ -67,7 +67,8 @@ public class GraphActivity extends AppCompatActivity{
             // turn your data into Entry objects
             try {
                 Log.d("Logging", result.getJSONObject(i).get("temperature").toString());
-                BarEntry entry = new BarEntry(((float) i), Float.valueOf(result.getJSONObject(i).get("temperature").toString()));
+                BarEntry entry = new BarEntry(((float) i),
+                        Float.valueOf(result.getJSONObject(i).get("temperature").toString()));
                 entries.add(entry);
             }catch(Exception E){
                 Log.e("BArChart", E.getMessage());
@@ -82,6 +83,7 @@ public class GraphActivity extends AppCompatActivity{
         chart.setData(barData);
         chart.invalidate(); // refresh
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -114,8 +116,6 @@ public class GraphActivity extends AppCompatActivity{
         AppController.getInstance().getRequestQueue().add(arrayRequest);
         if(responseArray[0] != null)
             return responseArray[0];
-
-
 
 
         return null;

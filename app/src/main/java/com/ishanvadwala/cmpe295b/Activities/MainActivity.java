@@ -1,36 +1,28 @@
 package com.ishanvadwala.cmpe295b.Activities;
 
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.zxing.Result;
 import com.ishanvadwala.cmpe295b.Adapters.MainAdapter;
+import com.ishanvadwala.cmpe295b.Fragments.GraphFragment;
 import com.ishanvadwala.cmpe295b.R;
 
 import org.json.JSONArray;
 
 import java.util.ArrayList;
 
-import me.dm7.barcodescanner.zxing.ZXingScannerView;
-
-public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
+public class MainActivity extends AppCompatActivity{
     String[] imageURLs;
     String[] controls;
-    private ZXingScannerView zXingScannerView;
 
     private Toolbar toolbar;
     @Override
@@ -81,37 +73,14 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.settingsItem:
-                    Intent intent = new Intent(this, GraphActivity.class);
+                    Intent intent = new Intent(this, GraphFragment.class);
                     startActivity(intent);
                 return true;
             case R.id.QRCodeItem:
-                zXingScannerView = new ZXingScannerView(this);
-                setContentView(zXingScannerView);
-                zXingScannerView.setResultHandler(this);
-                zXingScannerView.startCamera();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if(zXingScannerView != null)
-        zXingScannerView.stopCamera();
-    }
-
-    @Override
-    public void handleResult(Result result) {
-        Log.d("SCAN_RESULT", result.toString());
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Scan Result");
-        builder.setMessage(result.getText());
-        AlertDialog alertDialog = builder.create();
-        zXingScannerView.stopCamera();
-        Intent intent = new Intent(this, BarCodeResult.class);
-        intent.putExtra("result", result.getText());
-        startActivity(intent);
-    }
 }

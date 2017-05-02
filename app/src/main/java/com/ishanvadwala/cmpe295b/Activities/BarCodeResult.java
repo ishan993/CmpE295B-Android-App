@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -26,6 +27,7 @@ import org.json.JSONArray;
 public class BarCodeResult extends AppCompatActivity {
     private TextView textView;
     private Toolbar toolbar;
+    private ImageView tempImg, atmImg, humidityImg;
 
     final String DATA_URL ="http://54.187.201.38:3000/getdata";
     LineChart chart;

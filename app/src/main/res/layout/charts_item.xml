@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_item_chart"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/list_item_line_chart"
+        android:layout_height="200dp"
+        android:layout_width="match_parent"
+        android:elevation="@dimen/padding_small"/>
+    <com.github.mikephil.charting.charts.HorizontalBarChart
+        android:id="@+id/list_item_hbar_chart"
+        android:layout_below="@+id/list_item_line_chart"
+        android:layout_height="110dp"
+        android:layout_width="match_parent"
+        android:elevation="@dimen/padding_small" />
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/list_item_pie_chart"
+        android:layout_below="@+id/list_item_hbar_chart"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:elevation="@dimen/padding_small"/>
+</RelativeLayout>

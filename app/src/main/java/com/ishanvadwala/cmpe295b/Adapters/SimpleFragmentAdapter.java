@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
 import com.ishanvadwala.cmpe295b.Fragments.GraphFragment;
+import com.ishanvadwala.cmpe295b.Fragments.GraphListFragment;
+import com.ishanvadwala.cmpe295b.Fragments.LineChartFragment;
 import com.ishanvadwala.cmpe295b.Fragments.StatusFragment;
 
 /**
@@ -14,8 +16,8 @@ import com.ishanvadwala.cmpe295b.Fragments.StatusFragment;
  */
 
 public class SimpleFragmentAdapter extends FragmentPagerAdapter {
-    final int PAGE_COUNT = 4;
-    private String tabTitles[] = new String[] { "Status", "Temperature", "Pressure", "Humidity" };
+    final int PAGE_COUNT = 5;
+    private String tabTitles[] = new String[] { "Status","Line Chart", "Temperature", "Pressure", "Humidity" };
     private Context context;
     private String CROP_URL;
 
@@ -25,15 +27,20 @@ public class SimpleFragmentAdapter extends FragmentPagerAdapter {
         this.context = context;
     }
 
+
     @Override
     public int getCount() {
         return PAGE_COUNT;
     }
 
+
     @Override
     public Fragment getItem(int position) {
         if(position == 0)
             return StatusFragment.newInstance(CROP_URL);
+        if(position == 1)
+                return GraphListFragment.newInstance();
+
         return GraphFragment.newInstance(position + 1);
     }
 

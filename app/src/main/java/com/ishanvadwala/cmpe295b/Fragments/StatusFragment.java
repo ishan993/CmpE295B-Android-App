@@ -32,7 +32,7 @@ public class StatusFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mURL = getArguments().getString(CROP_URL);
-        Log.d("Inside status Fragment", mURL);
+       // Log.d("Inside status Fragment", mURL);
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.ishanvadwala.cmpe295b.Activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -12,7 +11,6 @@ import android.view.MenuItem;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.ishanvadwala.cmpe295b.Adapters.MainAdapter;
 import com.ishanvadwala.cmpe295b.Fragments.GraphFragment;
 import com.ishanvadwala.cmpe295b.R;
 
@@ -40,9 +38,9 @@ public class MainActivity extends AppCompatActivity{
         };
         controls = new String[]{"Humidity", "Weather", "Pressure"};
 
-        MainAdapter adapter = new MainAdapter(this, controls, imageURLs);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //ChartListAdapter adapter = new ChartListAdapter(this, controls, imageURLs);
+        //recyclerView.setAdapter(adapter);
+        //recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
     }
 

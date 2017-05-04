@@ -12,14 +12,14 @@
         android:name=".App"
         >
 
-        <activity android:name=".Activities.ScannerActivity">
+        <activity android:name=".Activities.DataTabActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".Activities.MainActivity" />
-        <activity android:name=".Activities.DataTabActivity" />
+        <activity android:name=".Activities.ScannerActivity" />
         <activity android:name=".Activities.BarCodeResult"
             android:parentActivityName=".Activities.MainActivity"/>
     </application>

@@ -118,7 +118,6 @@ public class GraphFragment extends Fragment{
         if(responseArray[0] != null)
             return responseArray[0];
 
-
         return null;
     }
 

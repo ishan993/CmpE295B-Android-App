@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,9 @@ import com.github.mikephil.charting.interfaces.datasets.IPieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
 import com.ishanvadwala.cmpe295b.Adapters.ChartListAdapter;
+import com.ishanvadwala.cmpe295b.Model.PressureData;
+import com.ishanvadwala.cmpe295b.Model.TemperatureData;
+import com.ishanvadwala.cmpe295b.Model.WeatherData;
 import com.ishanvadwala.cmpe295b.R;
 
 import java.util.ArrayList;
@@ -39,7 +43,14 @@ public class GraphListFragment extends Fragment{
         super.onCreate(savedInstanceState);
     }
 
-    public static Fragment newInstance(){
+    public static Fragment newInstance(Bundle savedInstanceState){
+
+        if(savedInstanceState != null){
+
+            Log.d("Inside TRY", savedInstanceState.toString()+"");
+            List<TemperatureData> list = savedInstanceState.getParcelableArrayList("tempBundle");
+            Log.d("RESULT", list.size()+"");
+        }
         return new GraphListFragment();
     }
 

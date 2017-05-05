@@ -2,6 +2,7 @@ package com.ishanvadwala.cmpe295b.Fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +26,7 @@ import com.github.mikephil.charting.interfaces.datasets.IPieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
 import com.ishanvadwala.cmpe295b.Adapters.ChartListAdapter;
+import com.ishanvadwala.cmpe295b.Model.HumidityData;
 import com.ishanvadwala.cmpe295b.Model.PressureData;
 import com.ishanvadwala.cmpe295b.Model.TemperatureData;
 import com.ishanvadwala.cmpe295b.Model.WeatherData;
@@ -38,20 +40,26 @@ import java.util.List;
  */
 public class GraphListFragment extends Fragment{
     private RecyclerView recyclerView;
+    private List<?> list;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d("onCreate====>>>>", getArguments().toString());
+
+
+
     }
 
-    public static Fragment newInstance(Bundle savedInstanceState){
+    public static Fragment newInstance(int position, Bundle savedInstanceState){
+        GraphListFragment graphListFragmentInstance = new GraphListFragment();
 
         if(savedInstanceState != null){
 
-            Log.d("Inside TRY", savedInstanceState.toString()+"");
-            List<TemperatureData> list = savedInstanceState.getParcelableArrayList("tempBundle");
-            Log.d("RESULT", list.size()+"");
+            graphListFragmentInstance.setArguments(savedInstanceState);
+            Log.d("==============>>>>", graphListFragmentInstance.getArguments().toString());
         }
-        return new GraphListFragment();
+        return graphListFragmentInstance;
     }
 
     @Nullable
@@ -59,11 +67,17 @@ public class GraphListFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_graph_list, container, false);
         recyclerView = (RecyclerView)view.findViewById(R.id.recycler_graph_list_fragment);
-        List<LineData> lineDataList = produceLineData();
+
         List<BarData> barDataList = produceBarData();
         List<PieData> pieDataList = producePieData();
-        recyclerView.setAdapter(new ChartListAdapter(getContext(),lineDataList, barDataList, pieDataList));
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        list = (ArrayList<? extends Parcelable>) getArguments().getParcelableArrayList("list");
+        List<LineData> lineDataList = getLineDataList(list);
+        recyclerView.setAdapter(new ChartListAdapter(getContext(), lineDataList, barDataList, pieDataList));
+
+
         return view;
     }
 
@@ -103,7 +117,7 @@ public class GraphListFragment extends Fragment{
 
         for(int i=0; i<5; i++){
             PieDataSet pieDataSet = new PieDataSet(pieEntries,"Quarter "+i);
-            pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+            pieDataSet.setColors(ColorTemplate.VORDIPLOM_COLORS);
             PieData pieData = new PieData(pieDataSet);
             pieDataList.add(pieData);
         }
@@ -139,11 +153,62 @@ public class GraphListFragment extends Fragment{
 
     public List<PieEntry> getPieChartEntry(){
         List<PieEntry> pieEntries = new ArrayList<>();
-        for(int i=1; i<3; i++) {
+        for(int i=1; i<8; i++) {
             PieEntry pieEntry1 = new PieEntry(i+9, "Good");
             pieEntries.add(pieEntry1);
         }
 
         return pieEntries;
     }
+
+    public List<LineData> getLineDataList(List<?> list){
+        List<Entry> entriesList = new ArrayList<>();
+        String label = "";
+
+        if(list.get(0) instanceof TemperatureData){
+            label = "Temperature Data";
+           for(int i =0; i < list.size(); i++){
+
+               Entry entry = new Entry();
+               TemperatureData tempData = (TemperatureData) list.get(i);
+               entry.setX(tempData.getDay());
+               entry.setY((float) tempData.getTemperature());
+               entriesList.add(entry);
+               Log.d("Temp: " + tempData.getTemperature(), "day: "+tempData.getDay());
+           }
+        }else if(list.get(0) instanceof HumidityData){
+            label = "Humidity Data";
+            for(int i =0; i < list.size(); i++){
+                Entry entry = new Entry();
+                HumidityData humData = (HumidityData) list.get(i);
+                entry.setX(humData.getDay());
+                entry.setY((float) humData.getHumidity());
+                entriesList.add(entry);
+            }
+        }else if(list.get(0) instanceof PressureData){
+            label = "Pressure Data";
+            for (int i=0; i<list.size(); i++){
+                Entry entry = new Entry();
+                PressureData pressData = (PressureData) list.get(i);
+                entry.setY(pressData.getDay());
+                entry.setX((float) pressData.getAtm());
+                entriesList.add(entry);
+            }
+        }
+
+        LineDataSet lineDataSet = new LineDataSet(entriesList, label);
+        lineDataSet.setDrawValues(false);
+        Utils.init(getContext());
+        lineDataSet.setColor(ColorTemplate.MATERIAL_COLORS[0]);
+        lineDataSet.setLineWidth(1.3f);
+        lineDataSet.setCircleHoleRadius(2f);
+        lineDataSet.setCircleRadius(3.5f);
+        List<LineData> lineDataList = new ArrayList<>();
+        LineData lineData = new LineData(lineDataSet);
+        lineDataList.add(lineData);
+
+        return lineDataList;
+    }
+
+
 }

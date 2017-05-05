@@ -41,10 +41,9 @@ public class SimpleFragmentAdapter extends FragmentPagerAdapter {
             humBundle = new Bundle();
             pressureBundle = new Bundle();
 
-            tempBundle.putParcelableArrayList("tempBundle", (ArrayList<? extends Parcelable>) map.get(0));
-            humBundle.putParcelableArrayList("humBundle", (ArrayList<? extends Parcelable>) map.get(1));
-            pressureBundle.putParcelableArrayList("pressBundle", (ArrayList<? extends Parcelable>) map.get(2));
-            List<TemperatureData> list = tempBundle.getParcelableArrayList("tempBundle");
+            tempBundle.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) map.get(0));
+            humBundle.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) map.get(1));
+            pressureBundle.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) map.get(2));
 
         }else
             Log.d("TagTagTag", "I got null");
@@ -62,18 +61,19 @@ public class SimpleFragmentAdapter extends FragmentPagerAdapter {
 
 
     @Override
-    public Fragment getItem(int position) {
-        Log.d("Rerendering", position+" ");
-        if(position == 0)
-            return StatusFragment.newInstance(CROP_URL);
-        if(position == 1) {
-            if(tempBundle  !=null)
-                Log.d("Data", tempBundle.toString());
-
-                return GraphListFragment.newInstance(tempBundle);
+    public Fragment getItem(int position){
+        switch(position){
+            case 0:
+                return StatusFragment.newInstance("Hahahahah, Dumbfuck");
+            case 1:
+                return GraphListFragment.newInstance(position, tempBundle);
+            case 2:
+                return GraphListFragment.newInstance(position, humBundle);
+            case 3:
+                return GraphListFragment.newInstance(position, pressureBundle);
+            default:
+                return GraphFragment.newInstance(1);
         }
-
-        return GraphFragment.newInstance(position + 1);
     }
 
     @Override

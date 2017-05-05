@@ -31,14 +31,13 @@ public class DataTabActivity extends AppCompatActivity {
 
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(viewPager);
        // List<TemperatureData> list = getIntent().getParcelableArrayListExtra("tempList");
         HashMap<Integer, List<?>> map = (HashMap<Integer, List<?>>) getIntent().getExtras().get("tempList");
         Log.d("Does this work?", map.size()+"Dumbfuck");
 
         viewPager.setAdapter(new SimpleFragmentAdapter(getSupportFragmentManager(),
-                DataTabActivity.this, getIntent().getStringExtra("CROP_URL"), null));
-
+                DataTabActivity.this, getIntent().getStringExtra("CROP_URL"), map));
+        tabLayout.setupWithViewPager(viewPager);
     }
 
 }

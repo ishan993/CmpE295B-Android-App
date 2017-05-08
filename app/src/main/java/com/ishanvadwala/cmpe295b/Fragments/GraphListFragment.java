@@ -33,6 +33,7 @@ import com.ishanvadwala.cmpe295b.Model.WeatherData;
 import com.ishanvadwala.cmpe295b.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -46,9 +47,6 @@ public class GraphListFragment extends Fragment{
         super.onCreate(savedInstanceState);
 
         Log.d("onCreate====>>>>", getArguments().toString());
-
-
-
     }
 
     public static Fragment newInstance(int position, Bundle savedInstanceState){
@@ -74,28 +72,12 @@ public class GraphListFragment extends Fragment{
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         list = (ArrayList<? extends Parcelable>) getArguments().getParcelableArrayList("list");
-        List<LineData> lineDataList = getLineDataList(list);
+        HashMap<Integer, List<?>> lineEntriesMap = getLineEntriesMap(list);
+        List<LineData> lineDataList = getLineDataSetMap(lineEntriesMap);
         recyclerView.setAdapter(new ChartListAdapter(getContext(), lineDataList, barDataList, pieDataList));
 
 
         return view;
-    }
-
-    public List<LineData> produceLineData(){
-        List<LineData> lineDataList = new ArrayList<>();
-        List<Entry> entryList = getLineChartEntries();
-        for(int i = 0; i<5; i++){
-            LineDataSet tempLineDataSet = new LineDataSet(entryList, "Temperatures");
-            tempLineDataSet.setDrawValues(false);
-            Utils.init(getContext());
-            tempLineDataSet.setColor(ColorTemplate.MATERIAL_COLORS[0]);
-            tempLineDataSet.setLineWidth(1.3f);
-            tempLineDataSet.setCircleHoleRadius(2f);
-            tempLineDataSet.setCircleRadius(3.5f);
-            LineData tempLineData = new LineData(tempLineDataSet);
-            lineDataList.add(tempLineData);
-        }
-        return lineDataList;
     }
 
     public List<BarData> produceBarData(){
@@ -126,21 +108,6 @@ public class GraphListFragment extends Fragment{
     }
 
 
-    public List<Entry> getLineChartEntries(){
-        int[] sampleData =new int[]{22,33,34,34,23,33,36,22,20,28,24,36,40,43,20,34,34,
-                23,40,32,22,11,33,36,22,20,43,20,34,34,23,33,36,22,33,34,34,23,33,36,22,20,28,24,36,40,43,20,34,34,
-                23,40,32,22,11,33,36,22,20,43,20,34,34,23,33,36, 22,33,34,34,23,33,36,22,20,28,24,36,40,43,20,34,34,
-                23,40,32,22,11,33,36,22,20,43,20,34,34,23,33,36,22,33,34,34,23,33,36,22,20,28,24,36,40,43,20,34,34,
-                23,40,32,22,11,33,36,22,20,43,20,34,34,23,33,36};
-        List<Entry> entryList = new ArrayList<>();
-        for(int i=0;i<120; i++){
-            Entry entry = new Entry();
-            entry.setX(i);
-            entry.setY(Float.valueOf(sampleData[i]));
-            entryList.add(entry);
-        }
-        return entryList;
-    }
 
     public List<BarEntry> getBarChartEntries(){
         List<BarEntry> entryList = new ArrayList<>();
@@ -164,37 +131,8 @@ public class GraphListFragment extends Fragment{
     public List<LineData> getLineDataList(List<?> list){
         List<Entry> entriesList = new ArrayList<>();
         String label = "";
+        HashMap<Integer, List<?>> map = new HashMap<>();
 
-        if(list.get(0) instanceof TemperatureData){
-            label = "Temperature Data";
-           for(int i =0; i < list.size(); i++){
-
-               Entry entry = new Entry();
-               TemperatureData tempData = (TemperatureData) list.get(i);
-               entry.setX(tempData.getDay());
-               entry.setY((float) tempData.getTemperature());
-               entriesList.add(entry);
-               Log.d("Temp: " + tempData.getTemperature(), "day: "+tempData.getDay());
-           }
-        }else if(list.get(0) instanceof HumidityData){
-            label = "Humidity Data";
-            for(int i =0; i < list.size(); i++){
-                Entry entry = new Entry();
-                HumidityData humData = (HumidityData) list.get(i);
-                entry.setX(humData.getDay());
-                entry.setY((float) humData.getHumidity());
-                entriesList.add(entry);
-            }
-        }else if(list.get(0) instanceof PressureData){
-            label = "Pressure Data";
-            for (int i=0; i<list.size(); i++){
-                Entry entry = new Entry();
-                PressureData pressData = (PressureData) list.get(i);
-                entry.setY(pressData.getDay());
-                entry.setX((float) pressData.getAtm());
-                entriesList.add(entry);
-            }
-        }
 
         LineDataSet lineDataSet = new LineDataSet(entriesList, label);
         lineDataSet.setDrawValues(false);
@@ -207,8 +145,85 @@ public class GraphListFragment extends Fragment{
         LineData lineData = new LineData(lineDataSet);
         lineDataList.add(lineData);
 
+        Log.d("MAP_SIZE----->", map.size()+"");
+
         return lineDataList;
     }
 
+    public HashMap<Integer, List<?>> getLineEntriesMap(List<?> list){
+        HashMap<Integer, List<?>> map = new HashMap<>();
+        String label="";
+
+        List<Entry> tempList;
+        if(list.get(0) instanceof TemperatureData){
+            label = "Temperature Data";
+
+
+            for(int i =0; i < list.size(); i++){
+
+                if ((List<Entry>) map.get(((TemperatureData) list.get(i)).getMonth())==null){
+                    tempList = new ArrayList<>();
+                }else
+                    tempList = (List<Entry>) map.get(((TemperatureData) list.get(i)).getMonth());
+
+                Entry entry = new Entry();
+                TemperatureData tempData = (TemperatureData) list.get(i);
+                entry.setX(tempData.getDay());
+                entry.setY((float) tempData.getTemperature());
+                tempList.add(entry);
+
+            }
+        }else if(list.get(0) instanceof HumidityData){
+            label = "Humidity Data";
+
+            for(int i =0; i < list.size(); i++){
+
+                if ((List<Entry>) map.get(((HumidityData) list.get(i)).getMonth())==null){
+                    tempList = new ArrayList<>();
+                }else
+                    tempList = (List<Entry>) map.get(((HumidityData) list.get(i)).getMonth());
+
+                Entry entry = new Entry();
+                HumidityData humData = (HumidityData) list.get(i);
+                entry.setX(humData.getDay());
+                entry.setY((float) humData.getHumidity());
+                tempList.add(entry);
+            }
+        }else if(list.get(0) instanceof PressureData){
+            label = "Pressure Data";
+            for (int i=0; i<list.size(); i++){
+
+                if ((List<Entry>) map.get(((PressureData) list.get(i)).getMonth())==null){
+                    tempList = new ArrayList<>();
+                }else
+                    tempList = (List<Entry>) map.get(((PressureData) list.get(i)).getMonth());
+
+                Entry entry = new Entry();
+                PressureData pressData = (PressureData) list.get(i);
+                entry.setY(pressData.getDay());
+                entry.setX((float) pressData.getAtm());
+                tempList.add(entry);
+            }
+        }
+        return map;
+    }
+
+    public List<LineData> getLineDataSetMap(HashMap<Integer, List<?>> map){
+        List<LineData> lineDataList = new ArrayList<>();
+
+        for(int key: map.keySet()) {
+            List<Entry> entryList = (List<Entry>) map.get(key);
+            LineDataSet tempLineDataSet = new LineDataSet(entryList, "Daily Value");
+            tempLineDataSet.setDrawValues(false);
+            Utils.init(getContext());
+            tempLineDataSet.setColor(ColorTemplate.MATERIAL_COLORS[key]);
+            tempLineDataSet.setLineWidth(1.3f);
+            tempLineDataSet.setCircleHoleRadius(2f);
+            tempLineDataSet.setCircleRadius(3.5f);
+            LineData lineData = new LineData(tempLineDataSet);
+            lineDataList.add(lineData);
+        }
+        return lineDataList;
+    }
 
 }

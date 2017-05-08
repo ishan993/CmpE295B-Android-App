@@ -99,8 +99,8 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("farmId", "f001");
-            jsonObject.put("startDate", "04-01-2017");
-            jsonObject.put("endDate", "05-01-2017");
+            jsonObject.put("startDate", "03-01-2017");
+            jsonObject.put("endDate", "06-01-2017");
         }catch (Exception e){
             Log.d("EXCEPTION", e.toString());
         }

@@ -1,9 +1,7 @@
 package com.ishanvadwala.cmpe295b.Fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -22,14 +19,13 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.interfaces.datasets.IPieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
+import com.ishanvadwala.cmpe295b.Activities.ScannerActivity;
 import com.ishanvadwala.cmpe295b.Adapters.ChartListAdapter;
 import com.ishanvadwala.cmpe295b.Model.HumidityData;
 import com.ishanvadwala.cmpe295b.Model.PressureData;
 import com.ishanvadwala.cmpe295b.Model.TemperatureData;
-import com.ishanvadwala.cmpe295b.Model.WeatherData;
 import com.ishanvadwala.cmpe295b.R;
 
 import java.util.ArrayList;
@@ -60,7 +56,6 @@ public class GraphListFragment extends Fragment{
         return graphListFragmentInstance;
     }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_graph_list, container, false);
@@ -68,12 +63,13 @@ public class GraphListFragment extends Fragment{
 
         List<BarData> barDataList = produceBarData();
         List<PieData> pieDataList = producePieData();
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         list = (ArrayList<? extends Parcelable>) getArguments().getParcelableArrayList("list");
         HashMap<Integer, List<?>> lineEntriesMap = getLineEntriesMap(list);
-        List<LineData> lineDataList = getLineDataSetMap(lineEntriesMap);
+        List<LineData> lineDataList = getLineDataList(lineEntriesMap);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        Log.d("FUCKETY FUCK FUCK", "you");
+
         recyclerView.setAdapter(new ChartListAdapter(getContext(), lineDataList, barDataList, pieDataList));
 
 
@@ -99,7 +95,9 @@ public class GraphListFragment extends Fragment{
 
         for(int i=0; i<5; i++){
             PieDataSet pieDataSet = new PieDataSet(pieEntries,"Quarter "+i);
-            pieDataSet.setColors(ColorTemplate.VORDIPLOM_COLORS);
+            pieDataSet.setValueTextSize(12);
+            pieDataSet.setSliceSpace(8);
+            pieDataSet.setColors(ColorTemplate.PASTEL_COLORS);
             PieData pieData = new PieData(pieDataSet);
             pieDataList.add(pieData);
         }
@@ -111,7 +109,7 @@ public class GraphListFragment extends Fragment{
 
     public List<BarEntry> getBarChartEntries(){
         List<BarEntry> entryList = new ArrayList<>();
-        for(int i=1;i<4; i++){
+        for(int i=1;i<3; i++){
             BarEntry entry = new BarEntry(i, i*25, "Ishan"+i);
             entryList.add(entry);
         }
@@ -120,34 +118,13 @@ public class GraphListFragment extends Fragment{
 
     public List<PieEntry> getPieChartEntry(){
         List<PieEntry> pieEntries = new ArrayList<>();
-        for(int i=1; i<8; i++) {
-            PieEntry pieEntry1 = new PieEntry(i+9, "Good");
-            pieEntries.add(pieEntry1);
+        int[] counter = ScannerActivity.getErrorCount();
+        String[] label = new String[]{"No Alert", "Alert"};
+        for(int i=0;i<2; i++){
+            PieEntry entry = new PieEntry(counter[i], label[i]);
+            pieEntries.add(entry);
         }
-
         return pieEntries;
-    }
-
-    public List<LineData> getLineDataList(List<?> list){
-        List<Entry> entriesList = new ArrayList<>();
-        String label = "";
-        HashMap<Integer, List<?>> map = new HashMap<>();
-
-
-        LineDataSet lineDataSet = new LineDataSet(entriesList, label);
-        lineDataSet.setDrawValues(false);
-        Utils.init(getContext());
-        lineDataSet.setColor(ColorTemplate.MATERIAL_COLORS[0]);
-        lineDataSet.setLineWidth(1.3f);
-        lineDataSet.setCircleHoleRadius(2f);
-        lineDataSet.setCircleRadius(3.5f);
-        List<LineData> lineDataList = new ArrayList<>();
-        LineData lineData = new LineData(lineDataSet);
-        lineDataList.add(lineData);
-
-        Log.d("MAP_SIZE----->", map.size()+"");
-
-        return lineDataList;
     }
 
     public HashMap<Integer, List<?>> getLineEntriesMap(List<?> list){
@@ -163,6 +140,7 @@ public class GraphListFragment extends Fragment{
 
                 if ((List<Entry>) map.get(((TemperatureData) list.get(i)).getMonth())==null){
                     tempList = new ArrayList<>();
+                    map.put(((TemperatureData) list.get(i)).getMonth(), tempList);
                 }else
                     tempList = (List<Entry>) map.get(((TemperatureData) list.get(i)).getMonth());
 
@@ -172,6 +150,7 @@ public class GraphListFragment extends Fragment{
                 entry.setY((float) tempData.getTemperature());
                 tempList.add(entry);
 
+
             }
         }else if(list.get(0) instanceof HumidityData){
             label = "Humidity Data";
@@ -180,6 +159,7 @@ public class GraphListFragment extends Fragment{
 
                 if ((List<Entry>) map.get(((HumidityData) list.get(i)).getMonth())==null){
                     tempList = new ArrayList<>();
+                    map.put(((HumidityData) list.get(i)).getMonth(), tempList);
                 }else
                     tempList = (List<Entry>) map.get(((HumidityData) list.get(i)).getMonth());
 
@@ -195,6 +175,7 @@ public class GraphListFragment extends Fragment{
 
                 if ((List<Entry>) map.get(((PressureData) list.get(i)).getMonth())==null){
                     tempList = new ArrayList<>();
+                    map.put(((PressureData) list.get(i)).getMonth(), tempList);
                 }else
                     tempList = (List<Entry>) map.get(((PressureData) list.get(i)).getMonth());
 
@@ -205,10 +186,12 @@ public class GraphListFragment extends Fragment{
                 tempList.add(entry);
             }
         }
+        Log.d("I doooooo1 get called",""+map.size());
+
         return map;
     }
 
-    public List<LineData> getLineDataSetMap(HashMap<Integer, List<?>> map){
+    public List<LineData> getLineDataList(HashMap<Integer, List<?>> map){
         List<LineData> lineDataList = new ArrayList<>();
 
         for(int key: map.keySet()) {
@@ -216,13 +199,15 @@ public class GraphListFragment extends Fragment{
             LineDataSet tempLineDataSet = new LineDataSet(entryList, "Daily Value");
             tempLineDataSet.setDrawValues(false);
             Utils.init(getContext());
-            tempLineDataSet.setColor(ColorTemplate.MATERIAL_COLORS[key]);
+            tempLineDataSet.setColor(ColorTemplate.VORDIPLOM_COLORS[key]);
+            tempLineDataSet.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[key]);
             tempLineDataSet.setLineWidth(1.3f);
             tempLineDataSet.setCircleHoleRadius(2f);
             tempLineDataSet.setCircleRadius(3.5f);
             LineData lineData = new LineData(tempLineDataSet);
             lineDataList.add(lineData);
         }
+        Log.d("I doooooo get called", ""+lineDataList.size());
         return lineDataList;
     }
 

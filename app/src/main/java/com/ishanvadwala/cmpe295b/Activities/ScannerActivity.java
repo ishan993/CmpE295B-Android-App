@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -49,6 +50,8 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     private ZXingScannerView zXingScannerView;
     private String DATA_URL =  "http://54.200.196.145:3001/getMobileData";
     private int[] counter;
+    public static int[] staticCounter;
+    private Button backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +95,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         getData();
     }
 
+
     public List getData() {
 
         final HashMap<Integer,List<?>> resultMap = new HashMap<>();
@@ -126,9 +130,9 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                         HumidityData humData = new HumidityData(jsonObject.getString("_id"),
                                 jsonObject.getDouble("humidity"), date);
                         if(jsonObject.getBoolean("alert"))
-                            counter[0]++;
-                        else
                             counter[1]++;
+                        else
+                            counter[0]++;
 
                         humList.add(humData);
                         tempList.add(tempData);
@@ -140,6 +144,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                         e.printStackTrace();
                     }
                 }
+                setErrorCount(counter);
                 map.put(0, tempList);
                 map.put(1, pressList);
                 map.put(2, humList);
@@ -152,7 +157,6 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("I got this:", error.toString());
-
             }
         });
 
@@ -174,6 +178,13 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public static void setErrorCount(int[] counter){
+        staticCounter = counter;
+    }
+    public static int[] getErrorCount(){
+        return staticCounter;
     }
 
 }

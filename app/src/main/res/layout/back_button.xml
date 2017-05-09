@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button
+    android:id="@+id/back_button"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:text="back"
+    android:layout_height="20px"
+    android:layout_width="30px"/>

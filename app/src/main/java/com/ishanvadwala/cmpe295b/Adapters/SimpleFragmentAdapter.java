@@ -31,6 +31,7 @@ import java.util.List;
 
 public class SimpleFragmentAdapter extends FragmentPagerAdapter {
     HashMap<Integer, List<?>> map;
+    String uid;
     final int PAGE_COUNT = 4;
     private JSONObject summaryJObj;
     private String tabTitles[] = new String[] { "Status", "Temperature", "Humidity", "Pressure"};
@@ -38,7 +39,7 @@ public class SimpleFragmentAdapter extends FragmentPagerAdapter {
     private String CROP_URL;
     Bundle tempBundle, humBundle, pressureBundle;
     public SimpleFragmentAdapter(FragmentManager fm, Context context, String URL,
-                                 HashMap<Integer, List<?>> map, String summaryData) {
+                                 HashMap<Integer, List<?>> map, String summaryData, String[] ids) {
         super(fm);
         CROP_URL = URL;
 
@@ -70,6 +71,7 @@ public class SimpleFragmentAdapter extends FragmentPagerAdapter {
             humBundle.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) map.get(2));
             pressureBundle.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) map.get(1));
 
+            uid = ids[0];
 
         }else
             Log.d("TagTagTag", "I got null");
@@ -90,7 +92,7 @@ public class SimpleFragmentAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position){
         switch(position){
             case 0:
-                return StatusFragment.newInstance("Hahahahah, Dumbfuck");
+                return StatusFragment.newInstance(uid);
             case 1:
                 return GraphListFragment.newInstance(position, tempBundle);
             case 2:

@@ -99,7 +99,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         final JSONArray[] responseArray = new JSONArray[1];
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("farmId", "f001");
+            jsonObject.put("farmId", idArray[1]);
             jsonObject.put("startDate", "03/01/2017");
             jsonObject.put("endDate", "06/01/2017");
         }catch (Exception e){
@@ -146,7 +146,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                 map.put(1, pressList);
                 map.put(2, humList);
                 Intent intent = new Intent(ScannerActivity.this, DataTabActivity.class);
-                intent.putExtra("idArray", idArray);
+                intent.putExtra("ids", idArray);
                 Log.d("FinalSize", tempList.size() + "");
                 intent.putExtra("tempList", map);
                // startActivity(intent);
@@ -175,7 +175,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
     public void getSummaryData(final Intent intent) throws JSONException {
         JSONObject jObj = new JSONObject();
-        String[] ids = (String[]) intent.getExtras().get("idArray");
+        String[] ids = (String[]) intent.getExtras().get("ids");
         jObj.put("uid", ""+ids[0]);
         jObj.put("farmId", ""+ids[1]);
         jObj.put("year", "2017");

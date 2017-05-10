@@ -120,7 +120,7 @@ public class GraphListFragment extends Fragment{
             PieDataSet pieDataSet = new PieDataSet(pieEntries,"Quarter "+i);
             pieDataSet.setValueTextSize(12);
             pieDataSet.setSliceSpace(3);
-            pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS[0], ColorTemplate.MATERIAL_COLORS[4]);
+            pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS[0], ColorTemplate.VORDIPLOM_COLORS[4]);
             PieData pieData = new PieData(pieDataSet);
             pieDataList.add(pieData);
         }

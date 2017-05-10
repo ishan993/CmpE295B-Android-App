@@ -89,7 +89,11 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         Log.d("SCAN_RESULT", result.toString());
         zXingScannerView.stopCamera();
         String[] ids = result.toString().split("-");
-        getData(ids);
+        if(ids.length != 3){
+            Intent errorIntent = new Intent(ScannerActivity.this, ErrorActivity.class);
+            startActivity(errorIntent);
+        }else
+            getData(ids);
     }
 
 
@@ -161,7 +165,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("I got this:", error.toString());
-                Intent errorIntent = new Intent(ScannerActivity.this, ScannerActivity.class);
+                Intent errorIntent = new Intent(ScannerActivity.this, ErrorActivity.class);
                 startActivity(errorIntent);
             }
         });
@@ -195,7 +199,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("ERROR_ERROR_ERROR", error.getMessage());
-                Intent errorIntent = new Intent(ScannerActivity.this, ScannerActivity.class);
+                Intent errorIntent = new Intent(ScannerActivity.this, ErrorActivity.class);
                 startActivity(errorIntent);
             }
         });

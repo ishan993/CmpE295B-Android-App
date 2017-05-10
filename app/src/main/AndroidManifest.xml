@@ -23,6 +23,7 @@
             android:parentActivityName=".Activities.ScannerActivity"/>
         <activity android:name=".Activities.BarCodeResult"
             android:parentActivityName=".Activities.MainActivity"/>
+        <activity android:name=".Activities.ErrorActivity" />
     </application>
 
 </manifest>

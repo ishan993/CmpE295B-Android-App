@@ -2,23 +2,19 @@ package com.ishanvadwala.cmpe295b.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.NetworkImageView;
 import com.google.zxing.Result;
 import com.ishanvadwala.cmpe295b.Controller.AppController;
 import com.ishanvadwala.cmpe295b.Model.HumidityData;
@@ -48,7 +44,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     LinearLayout scannerLayout;
     private Toolbar toolbar;
     private ZXingScannerView zXingScannerView;
-    private String DATA_URL =  "http://54.200.196.145:3001/getMobileData";
+    private String ROOT_URL =  "http://54.200.196.145:3001/";
     private int[] counter;
     public static int[] staticCounter;
     private Button backButton;
@@ -60,8 +56,8 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Farm Produce Traceability");
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayShowHomeEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
 
         scannerLayout = (LinearLayout)findViewById(R.id.scannerLayout);
@@ -92,28 +88,29 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     public void handleResult(Result result) {
         Log.d("SCAN_RESULT", result.toString());
         zXingScannerView.stopCamera();
-        getData();
+        String[] ids = result.toString().split("-");
+        getData(ids);
     }
 
 
-    public List getData() {
+    public List getData(final String[] idArray) {
 
         final HashMap<Integer,List<?>> resultMap = new HashMap<>();
         final JSONArray[] responseArray = new JSONArray[1];
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("farmId", "f001");
-            jsonObject.put("startDate", "03-01-2017");
-            jsonObject.put("endDate", "06-01-2017");
+            jsonObject.put("startDate", "03/01/2017");
+            jsonObject.put("endDate", "06/01/2017");
         }catch (Exception e){
             Log.d("EXCEPTION", e.toString());
         }
-        JsonArrayRequest arrayRequest = new JsonArrayRequest(Request.Method.POST, DATA_URL, jsonObject, new Response.Listener<JSONArray>() {
+        JsonArrayRequest arrayRequest = new JsonArrayRequest(Request.Method.POST, ROOT_URL+"getMobileData", jsonObject, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 HashMap<Integer, List<?>> map = new HashMap<>();
                 responseArray[0] = response;
-                DateFormat df = new SimpleDateFormat("MM-dd-yyyy");
+                DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
                 List<TemperatureData> tempList = new ArrayList<>();
                 List<PressureData> pressList = new ArrayList<>();
                 List<HumidityData> humList = new ArrayList<>();
@@ -149,14 +146,23 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
                 map.put(1, pressList);
                 map.put(2, humList);
                 Intent intent = new Intent(ScannerActivity.this, DataTabActivity.class);
-                Log.d("FinalSize", tempList.size()+"");
+                intent.putExtra("idArray", idArray);
+                Log.d("FinalSize", tempList.size() + "");
                 intent.putExtra("tempList", map);
-                startActivity(intent);
+               // startActivity(intent);
+                try {
+                    getSummaryData(intent);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("I got this:", error.toString());
+                Intent errorIntent = new Intent(ScannerActivity.this, ScannerActivity.class);
+                startActivity(errorIntent);
             }
         });
 
@@ -165,6 +171,37 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
 
         return null;
+    }
+
+    public void getSummaryData(final Intent intent) throws JSONException {
+        JSONObject jObj = new JSONObject();
+        String[] ids = (String[]) intent.getExtras().get("idArray");
+        jObj.put("uid", ""+ids[0]);
+        jObj.put("farmId", ""+ids[1]);
+        jObj.put("year", "2017");
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.POST,
+                ROOT_URL + "getSummaryData", jObj, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    Log.d("SUMMARY", response.toString());
+                    intent.putExtra("summaryData", response.getJSONObject(0).toString());
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("ERROR_ERROR_ERROR", error.getMessage());
+                Intent errorIntent = new Intent(ScannerActivity.this, ScannerActivity.class);
+                startActivity(errorIntent);
+            }
+        });
+
+
+        AppController.getInstance().getRequestQueue().add(request);
     }
 
     @Override

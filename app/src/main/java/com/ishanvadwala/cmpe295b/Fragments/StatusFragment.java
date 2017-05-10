@@ -20,11 +20,9 @@ public class StatusFragment extends Fragment {
     ImageView tempImg, atmImg, humidityImg;
     TextView tempTxt, atmTxt, humidityTxt;
 
-    public static StatusFragment newInstance(String URL) {
-        Bundle args = new Bundle();
-        args.putString(CROP_URL, URL);
+    public static StatusFragment newInstance(Bundle bundle) {
         StatusFragment fragment = new StatusFragment();
-        fragment.setArguments(args);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -48,6 +46,12 @@ public class StatusFragment extends Fragment {
         tempTxt.setText("Temperature");
         atmTxt.setText("Atmospheric Pressure");
         humidityTxt.setText("Humidity");
+
+        setStatus();
         return view;
+    }
+
+    public void setStatus(){
+        
     }
 }

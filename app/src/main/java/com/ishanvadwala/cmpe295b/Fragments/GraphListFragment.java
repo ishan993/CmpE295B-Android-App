@@ -1,5 +1,6 @@
 package com.ishanvadwala.cmpe295b.Fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -63,6 +64,7 @@ public class GraphListFragment extends Fragment{
 
         List<BarData> barDataList = produceBarData();
         List<PieData> pieDataList = producePieData();
+
         list = (ArrayList<? extends Parcelable>) getArguments().getParcelableArrayList("list");
         HashMap<Integer, List<?>> lineEntriesMap = getLineEntriesMap(list);
         List<LineData> lineDataList = getLineDataList(lineEntriesMap);
@@ -77,15 +79,36 @@ public class GraphListFragment extends Fragment{
     }
 
     public List<BarData> produceBarData(){
+        float min = getArguments().getFloat("min");
+        float avg = getArguments().getFloat("avg");
+        float max = getArguments().getFloat("max");
+
+        Utils.init(getContext());
+
         List<BarData> barDataList = new ArrayList<>();
-        List<BarEntry> entryList = getBarChartEntries();
-        for(int i = 0; i<5; i++){
-            BarDataSet tempBarDataSet = new BarDataSet(entryList, "Monthly Averages");
-            Utils.init(getContext());
-            tempBarDataSet.setColor(ColorTemplate.MATERIAL_COLORS[1]);
-            BarData tempBarData = new BarData(tempBarDataSet);
-            barDataList.add(tempBarData);
-        }
+        BarEntry entry1 =  new BarEntry(1, min);
+        List<BarEntry> list1 = new ArrayList<>();
+        list1.add(entry1);
+        BarDataSet barDataSet1 = new BarDataSet(list1, "Min");
+        barDataSet1.setColor(ColorTemplate.MATERIAL_COLORS[0]);
+
+
+        BarEntry entry2 =  new BarEntry(2, avg);
+        List<BarEntry> list2 = new ArrayList<>();
+        list2.add(entry2);
+        BarDataSet barDataSet2 = new BarDataSet(list2, "Avg");
+        barDataSet2.setColor(Color.parseColor("#FFEE58"));
+
+
+        BarEntry entry3 =  new BarEntry(3, max);
+        List<BarEntry> list3 = new ArrayList<>();
+        list3.add(entry3);
+        BarDataSet barDataSet3 = new BarDataSet(list3, "Max");
+        barDataSet1.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
+
+        BarData barData = new BarData(barDataSet1, barDataSet2, barDataSet3);
+
+        barDataList.add(barData);
         return barDataList;
     }
 
@@ -96,8 +119,8 @@ public class GraphListFragment extends Fragment{
         for(int i=0; i<5; i++){
             PieDataSet pieDataSet = new PieDataSet(pieEntries,"Quarter "+i);
             pieDataSet.setValueTextSize(12);
-            pieDataSet.setSliceSpace(8);
-            pieDataSet.setColors(ColorTemplate.PASTEL_COLORS);
+            pieDataSet.setSliceSpace(3);
+            pieDataSet.setColors(ColorTemplate.MATERIAL_COLORS[0], ColorTemplate.MATERIAL_COLORS[4]);
             PieData pieData = new PieData(pieDataSet);
             pieDataList.add(pieData);
         }
@@ -106,15 +129,6 @@ public class GraphListFragment extends Fragment{
     }
 
 
-
-    public List<BarEntry> getBarChartEntries(){
-        List<BarEntry> entryList = new ArrayList<>();
-        for(int i=1;i<3; i++){
-            BarEntry entry = new BarEntry(i, i*25, "Ishan"+i);
-            entryList.add(entry);
-        }
-        return entryList;
-    }
 
     public List<PieEntry> getPieChartEntry(){
         List<PieEntry> pieEntries = new ArrayList<>();
@@ -181,8 +195,8 @@ public class GraphListFragment extends Fragment{
 
                 Entry entry = new Entry();
                 PressureData pressData = (PressureData) list.get(i);
-                entry.setY(pressData.getDay());
-                entry.setX((float) pressData.getAtm());
+                entry.setX(pressData.getDay());
+                entry.setY((float) pressData.getAtm());
                 tempList.add(entry);
             }
         }

@@ -49,7 +49,7 @@ public class ChartListAdapter extends RecyclerView.Adapter<ChartListAdapter.View
 
         lineChart.setData(lineDataList.get(position));
         lineChart.animateXY(2000, 2000);
-        hBarChart.setData(barDataList.get(position));
+        hBarChart.setData(barDataList.get(0));
         hBarChart.animateXY(1000, 2000);
         pieChart.setData(pieDataList.get(position));
         pieChart.animateXY(1000, 1000);
